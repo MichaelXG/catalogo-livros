@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📚 Catálogo de Livros</title>
+  <style>
+    :root {
+      --primary: #007bff;
+      --primary-dark: #0056b3;
+      --bg: #f0f2f5;
+      --card-bg: #fff;
+      --input-bg: #f7f9fc;
+      --text: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.07);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-dark);
+      margin-bottom: 30px;
+    }
+
+    .actions, .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      transition: 0.2s;
+    }
+
+    input[type="text"], input[type="number"], select {
+      background-color: var(--input-bg);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
+      background-color: #fff;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .book {
+      background: #ffffff;
+      border: 1px solid #dfe3e8;
+      border-left: 6px solid var(--primary);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .book strong {
+      color: var(--primary-dark);
+      font-size: 1.1em;
+    }
+
+    .book small {
+      color: #666;
+    }
+
+    .book input {
+      margin-top: 8px;
+      width: 130px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .actions, .filters {
+        flex-direction: column;
+      }
+
+      input, select, button {
+        width: 100%;
+      }
+
+      .book input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📚 Catálogo de Livros</h1>
+
+    <div class="actions">
+      <input type="text" id="titulo" placeholder="Título">
+      <input type="text" id="autor" placeholder="Autor">
+      <input type="text" id="genero" placeholder="Gênero">
+      <input type="number" id="ano" placeholder="Ano">
+      <button onclick="adicionarLivro()">Adicionar Livro</button>
+    </div>
+
+    <div class="filters">
+      <input type="text" id="busca" placeholder="Buscar por título, autor ou gênero" oninput="buscarLivro()">
+      <select onchange="ordenarLivros(this.value)">
+        <option value="">Ordenar por</option>
+        <option value="titulo">Título</option>
+        <option value="autor">Autor</option>
+        <option value="avaliacao">Avaliação</option>
+      </select>
+      <button onclick="exportarLivros()">Exportar JSON</button>
+    </div>
+
+    <div id="lista"></div>
+  </div>
+
+  <script>
+    let livros = [];
+
+    async function carregarLivros() {
+      try {
+        const response = await fetch('books.json');
+        const data = await response.json();
+        livros = data;
+        localStorage.setItem('livros', JSON.stringify(livros));
+      } catch {
+        livros = JSON.parse(localStorage.getItem('livros')) || [];
+      }
+      exibirLivros();
+    }
+
+    function salvarLivros() {
+      localStorage.setItem('livros', JSON.stringify(livros));
+    }
+
+    function exibirLivros(lista = livros) {
+      const container = document.getElementById('lista');
+      container.innerHTML = '';
+      if (lista.length === 0) {
+        container.innerHTML = '<p>Nenhum livro encontrado.</p>';
+        return;
+      }
+
+      lista.forEach((livro, index) => {
+        const media = livro.avaliacoes?.length
+          ? (livro.avaliacoes.reduce((a, b) => a + b) / livro.avaliacoes.length).toFixed(1)
+          : 'Sem avaliações';
+
+        container.innerHTML += `
+          <div class="book">
+            <strong>${livro.titulo}</strong><br>
+            por ${livro.autor} <br>
+            <small>${livro.genero} • ${livro.ano}</small><br>
+            <em>Avaliação média:</em> ${media}<br>
+            <input type="number" min="1" max="5" placeholder="Avaliar" onchange="avaliarLivro(${index}, this.value)">
+          </div>
+        `;
+      });
+    }
+
+    function adicionarLivro() {
+      const titulo = document.getElementById('titulo').value.trim();
+      const autor = document.getElementById('autor').value.trim();
+      const genero = document.getElementById('genero').value.trim();
+      const ano = parseInt(document.getElementById('ano').value);
+
+      if (!titulo || !autor || !genero || isNaN(ano)) {
+        alert('Preencha todos os campos corretamente!');
+        return;
+      }
+
+      livros.push({ titulo, autor, genero, ano, avaliacoes: [] });
+      salvarLivros();
+      exibirLivros();
+
+      ['titulo', 'autor', 'genero', 'ano'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function buscarLivro() {
+      const termo = document.getElementById('busca').value.toLowerCase();
+      const filtrados = livros.filter(l =>
+        l.titulo.toLowerCase().includes(termo) ||
+        l.autor.toLowerCase().includes(termo) ||
+        l.genero.toLowerCase().includes(termo)
+      );
+      exibirLivros(filtrados);
+    }
+
+    function ordenarLivros(tipo) {
+      const ordenado = [...livros];
+      if (tipo === 'titulo' || tipo === 'autor') {
+        ordenado.sort((a, b) => a[tipo].localeCompare(b[tipo]));
+      } else if (tipo === 'avaliacao') {
+        ordenado.sort((a, b) => {
+          const avg = (arr) => arr.length ? arr.reduce((a, b) => a + b) / arr.length : 0;
+          return avg(b.avaliacoes) - avg(a.avaliacoes);
+        });
+      }
+      exibirLivros(ordenado);
+    }
+
+    function avaliarLivro(index, nota) {
+      nota = parseInt(nota);
+      if (nota < 1 || nota > 5) return alert('A avaliação deve ser entre 1 e 5');
+      livros[index].avaliacoes.push(nota);
+      salvarLivros();
+      exibirLivros();
+    }
+
+    function exportarLivros() {
+      const blob = new Blob([JSON.stringify(livros, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'catalogo-livros.json';
+      link.click();
+    }
+
+    carregarLivros();
+  </script>
+</body>
+</html>

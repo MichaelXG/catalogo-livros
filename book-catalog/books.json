@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "titulo": "Dom Casmurro",
+    "autor": "Machado de Assis",
+    "genero": "Romance",
+    "ano": 1899,
+    "avaliacoes": [5, 4, 5]
+  },
+  {
+    "id": 2,
+    "titulo": "1984",
+    "autor": "George Orwell",
+    "genero": "Ficção Científica",
+    "ano": 1949,
+    "avaliacoes": [5, 5, 4, 5]
+  },
+  {
+    "id": 3,
+    "titulo": "O Pequeno Príncipe",
+    "autor": "Antoine de Saint-Exupéry",
+    "genero": "Fábula",
+    "ano": 1943,
+    "avaliacoes": [5, 5, 5]
+  },
+  {
+    "id": 4,
+    "titulo": "Harry Potter e a Pedra Filosofal",
+    "autor": "J.K. Rowling",
+    "genero": "Fantasia",
+    "ano": 1997,
+    "avaliacoes": [5, 4, 4, 5, 5]
+  },
+  {
+    "id": 5,
+    "titulo": "O Senhor dos Anéis",
+    "autor": "J.R.R. Tolkien",
+    "genero": "Fantasia",
+    "ano": 1954,
+    "avaliacoes": [5, 5, 5, 5]
+  },
+  {
+    "id": 6,
+    "titulo": "A Revolução dos Bichos",
+    "autor": "George Orwell",
+    "genero": "Sátira",
+    "ano": 1945,
+    "avaliacoes": [4, 4, 5]
+  },
+  {
+    "id": 7,
+    "titulo": "Capitães da Areia",
+    "autor": "Jorge Amado",
+    "genero": "Drama",
+    "ano": 1937,
+    "avaliacoes": [5, 4, 3, 4]
+  },
+  {
+    "id": 8,
+    "titulo": "Orgulho e Preconceito",
+    "autor": "Jane Austen",
+    "genero": "Romance",
+    "ano": 1813,
+    "avaliacoes": [5, 5, 4, 5]
+  },
+  {
+    "id": 9,
+    "titulo": "Moby Dick",
+    "autor": "Herman Melville",
+    "genero": "Aventura",
+    "ano": 1851,
+    "avaliacoes": [3, 4, 4]
+  },
+  {
+    "id": 10,
+    "titulo": "O Código Da Vinci",
+    "autor": "Dan Brown",
+    "genero": "Suspense",
+    "ano": 2003,
+    "avaliacoes": [5, 4, 4, 5]
+  }
+]
